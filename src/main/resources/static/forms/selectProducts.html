@@ -1,0 +1,100 @@
+
+<form role="form" class="form-horizontal">
+
+
+    <p/>
+    <strong>Kunde</strong>
+    {{customer.name}}
+    <p/>
+    {{customer.street}}
+    <p/>
+    {{customer.city}}
+    <p/>    
+
+
+    <div class="control-group">
+        <table ng-table="productsTable" class="table table-striped">
+            <tr ng-repeat="product in productList">
+                <td data-title="'Id'" >
+                    {{product.odooId}}
+                </td>
+                <td data-title="'Name'" >
+                    {{product.name}}
+                </td>
+                <td data-title="'Preis'" >
+                    {{product.price}}
+                </td>
+                <td data-title="'Menge'" >
+                    <input type="number" ng-model="product.amount"></input>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <script cam-script type="text/form-script">
+        inject(['$scope', '$http', function($scope, $http) {
+            camForm.on('form-loaded', function() {
+                camForm.variableManager.fetchVariable('productList');
+                camForm.variableManager.fetchVariable('customer');
+            });
+
+            camForm.on('variables-fetched', function() {
+                var productList = camForm.variableManager.variable('productList').value;
+                $scope.productList = productList;
+                
+                var customer = camForm.variableManager.variable('customer').value;
+                $scope.customer = customer;
+                
+                
+                // Ugly, ugly JavaScript! Bah! Look, I can just add fields to objects ...
+                for (var key in productList) {
+                    console.log(productList[key]);
+                    productList[key].amount = 0;
+                }
+                console.log($scope.productList);
+            });
+            
+            camForm.on('submit', function(evt) {
+                var productList = $scope.productList;
+                
+                
+                var orderList = [];
+                
+                for (var index in productList) {
+                    console.log(productList[index]);
+                    var orderLine = {};
+                    
+                    /* No, we don't order negative amounts :-)
+                     * In any reasonable environment this should also
+                     * be checked in the backend.
+                     * And again - adding fields dynamically - sigh ...
+                     */                    
+                     if(productList[index].amount > 0) {
+                        orderLine.productId = productList[index].odooId;
+                        orderLine.quantity = productList[index].amount;
+                        orderLine.name = productList[index].name;
+                        orderLine.unitOfMeasureId = 1;
+                        orderLine.unitPrice = productList[index].price;
+                        orderList.push(orderLine);
+                    }
+                    
+                }
+                
+                console.log(orderList);
+                
+                // Now let's introduce our nice order List to the process engine
+                camForm.variableManager.createVariable({
+                    name: 'orderList',
+                    type: 'Object',
+                    value: orderList,
+                    valueInfo: {
+                        // We want JSON, not that XML rubbish ...
+                        serializationDataFormat: 'application/json',
+                        // This is actually tricky to get right!
+                        objectTypeName: 'java.util.ArrayList<ch.itsheinrich.teaching.camunda.model.OrderLine>'                    
+                    }
+                });
+            });
+        }]);        
+    </script> 
+</form>

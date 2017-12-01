@@ -1,0 +1,17 @@
+
+<strong>Offerte Drucken</strong><p/>
+
+<form role="form" class="form-horizontal">        
+    
+    <a cam-file-download="orderPDF"></a>
+
+    <script cam-script type="text/form-script">
+        inject(['$scope', '$http', function($scope, $http) {
+             camForm.on('form-loaded', function() {
+                 
+                $scope.filename = '';
+                 
+             });
+         }]);
+    </script> 
+</form>

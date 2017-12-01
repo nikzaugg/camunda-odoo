@@ -1,0 +1,39 @@
+<strong>Eine neue Offerte erstellen.</strong><p/>
+Bitte wählen Sie einen Kunden aus.
+
+<form role="form" class="form-horizontal">        
+    <div class="control-group">
+        <label class="control-label">Kunde: </label>        
+        <div class="controls">           
+            <select cam-variable-name="customer_id" cam-variable-type="Integer" >
+                <!-- We iterate over the data structure provided in the 
+                  -- Customer class of the java backend. We can directly operate
+                  -- on the JSON data structures as is. No conversion required!
+                  -->
+                <option ng-repeat="customer in CustomerList" value="{{customer.odooId}}">{{customer.name}}</option>                
+            </select>
+        </div>
+    </div>
+
+    <script cam-script type="text/form-script">
+        /* We don't have a running instance jet. Thus we cannot pull the data
+         * from process variables. Instead we simply call a REST-API on the
+         * server to provide the instance-independent data.
+         */
+        inject(['$scope', '$http', function($scope, $http) {
+             camForm.on('form-loaded', function() {
+                 $http({
+                     method: 'GET',
+                     url: 'http://localhost:8080/customers'
+                 }).then(
+                     function(success) {
+                         $scope.CustomerList = success.data;
+                     },
+                     function(error) {
+                         console.log(error);
+                     }
+                 );
+             });
+         }]);
+    </script> 
+</form>

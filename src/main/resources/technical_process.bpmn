@@ -239,11 +239,11 @@
       <bpmn:incoming>SequenceFlow_1cwrc5n</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_1u3ayxu</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0fh7kln" sourceRef="UserTask_1vs8hw6" targetRef="Task_1pqavw7" />
     <bpmn:userTask id="UserTask_1vs8hw6" name="Offerte Drucken" camunda:formKey="embedded:app:forms/printOrder.html" camunda:assignee="demo">
       <bpmn:incoming>SequenceFlow_13xp2ez</bpmn:incoming>
       <bpmn:outgoing>SequenceFlow_0fh7kln</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:sequenceFlow id="SequenceFlow_0fh7kln" sourceRef="UserTask_1vs8hw6" targetRef="Task_1pqavw7" />
   </bpmn:process>
   <bpmn:message id="Message_1vnl8fd" name="Message_12oqc49" />
   <bpmn:message id="Message_1pg960j" name="Message_2fkq3n6" />
@@ -718,7 +718,7 @@
       <bpmndi:BPMNEdge id="SequenceFlow_13xp2ez_di" bpmnElement="SequenceFlow_13xp2ez">
         <di:waypoint xsi:type="dc:Point" x="1061" y="774" />
         <di:waypoint xsi:type="dc:Point" x="1127" y="774" />
-        <di:waypoint xsi:type="dc:Point" x="1127" y="850" />
+        <di:waypoint xsi:type="dc:Point" x="1127" y="839" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1049" y="752.5" width="90" height="13" />
         </bpmndi:BPMNLabel>
@@ -776,13 +776,13 @@
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="UserTask_1vs8hw6_di" bpmnElement="UserTask_1vs8hw6">
-        <dc:Bounds x="1077" y="850" width="100" height="80" />
+        <dc:Bounds x="1077" y="839" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SequenceFlow_0fh7kln_di" bpmnElement="SequenceFlow_0fh7kln">
-        <di:waypoint xsi:type="dc:Point" x="1127" y="930" />
+        <di:waypoint xsi:type="dc:Point" x="1127" y="919" />
         <di:waypoint xsi:type="dc:Point" x="1127" y="1017" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1142" y="966.5" width="0" height="13" />
+          <dc:Bounds x="1097" y="961.5" width="90" height="13" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

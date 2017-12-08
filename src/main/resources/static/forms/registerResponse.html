@@ -1,0 +1,70 @@
+<strong>Eine neue Offerte erstellen.</strong><p/>
+Bitte wählen Sie eine Offerte aus.
+
+<form role="form" class="form-horizontal">
+    <div class="control-group">
+        <label class="control-label">Offerte: </label>
+        <div class="controls">
+            <select cam-variable-name="quotation_id" cam-variable-type="Integer" ng-change="update()"
+                    ng-model="currentQuotation">
+                <!-- We iterate over the data structure provided in the
+                  -- Customer class of the java backend. We can directly operate
+                  -- on the JSON data structures as is. No conversion required!
+                  -->
+                <option ng-repeat="quotation in QuotationsList" value="{{quotation.odooId}}">{{quotation.name}}</option>
+            </select>
+        </div>
+    </div>
+
+    <strong>Offerte</strong>
+    <p ng-bind="quotation.name" />
+
+
+    <hr>
+    <div class="control-group">
+        <label class="control-label">Wurde die Offerte angenommen?</label>
+        <div class="controls">
+            <input type="checkbox"
+                   cam-variable-name="isOfferingAccepted"
+                   cam-variable-type="Boolean"
+                   class="form-control" />
+        </div>
+    </div>
+    <script cam-script type="text/form-script">
+        inject(['$scope', '$http', function($scope, $http) {
+
+            $scope.update = function() {
+              $scope.quotation = $scope.QuotationsList.find((quotation) => {
+                 return quotation.odooId === parseInt(this.currentQuotation);
+              }, $scope);
+              console.log($scope.quotation);
+            }
+
+            camForm.on('submit', function(evt) {
+                camForm.variableManager.variableValue('quotation_id',$scope.currentQuotation);
+
+            });
+
+
+            /* We don't have a running instance jet. Thus we cannot pull the data
+             * from process variables. Instead we simply call a REST-API on the
+             * server to provide the instance-independent data.
+             */
+             camForm.on('form-loaded', function() {
+                 $http({
+                     method: 'GET',
+                     url: 'http://localhost:8080/quotations'
+                 }).then(
+                     function(success) {
+                         $scope.QuotationsList = success.data;
+                     },
+                     function(error) {
+                         console.log(error);
+                     }
+                 );
+             });
+        }]);
+
+
+    </script>
+</form>

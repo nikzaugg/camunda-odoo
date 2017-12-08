@@ -366,6 +366,41 @@ public class OdooAdapter {
         return report_data;
     }
 
+    public byte[] printInvoice(int invoiceId) throws XmlRpcException {
+        // sale.report_saleorder
+        final Map<String, Object> result = (Map<String, Object>) reportClient.execute(
+                "render_report", asList(
+                        config.getDb(),
+                        config.getUserId(),
+                        config.getPassword(),
+                        "sale.report_invoice",
+                        asList(invoiceId)));
+        final byte[] report_data = DatatypeConverter.parseBase64Binary(
+                (String) result.get("result"));
+        return report_data;
+    }
+
+    public Object confirmSaleOrder(Integer orderId) throws XmlRpcException {
+        objectClient.execute("execute_kw",asList(
+                config.getDb(),
+                config.getUserId(),
+                config.getPassword(),
+                "sale.order",
+                "action_confirm",
+                asList(orderId)
+        ));
+        Object invoice_id = objectClient.execute("execute_kw",asList(
+                config.getDb(),
+                config.getUserId(),
+                config.getPassword(),
+                "sale.order",
+                "action_invoice_create",
+                asList(orderId)
+        ));
+
+        return invoice_id.value;
+    }
+
     /**
      * ************** EXPERIMENTAL ***********************
      */
@@ -415,4 +450,22 @@ public class OdooAdapter {
         ));
 
     }
+
+    public void createInvoiceLine(OrderLine line, int orderId) throws XmlRpcException {
+
+        HashMap lineMap = line.toHashMap();
+        lineMap.put("order_id", orderId);
+        List values = asList(lineMap);
+
+        int id = (Integer) objectClient.execute("execute_kw", asList(
+                config.getDb(),
+                config.getUserId(),
+                config.getPassword(),
+                "sale.order.line", "create",
+                values
+        ));
+
+    }
+
+
 }

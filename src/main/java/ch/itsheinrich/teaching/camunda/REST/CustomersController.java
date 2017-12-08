@@ -18,6 +18,7 @@
 package ch.itsheinrich.teaching.camunda.REST;
 
 import ch.itsheinrich.teaching.camunda.model.Customer;
+import ch.itsheinrich.teaching.camunda.model.SaleOrder;
 import ch.itsheinrich.teaching.camunda.odoo.AdapterFactory;
 import ch.itsheinrich.teaching.camunda.odoo.OdooAdapter;
 import ch.itsheinrich.teaching.camunda.odoo.OdooConnection;
@@ -31,7 +32,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  *
- * @author Peter Heinrich
+ * @author Lauch Dieter
  */
 @RestController
 public class CustomersController {
@@ -40,6 +41,16 @@ public class CustomersController {
     public List<Customer> getCustomerNames() {
         try {
             return AdapterFactory.getOdooAdapter().readFiveCustomers();
+        }
+        catch(Exception e) {
+            return new ArrayList<>();
+        }
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/quotations", produces = APPLICATION_JSON_VALUE)
+    public List<SaleOrder> getQuotationsNames() {
+        try {
+            return AdapterFactory.getOdooAdapter().getFiveQuotations();
         }
         catch(Exception e) {
             return new ArrayList<>();

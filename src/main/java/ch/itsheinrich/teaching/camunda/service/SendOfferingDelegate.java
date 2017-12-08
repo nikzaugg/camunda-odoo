@@ -11,6 +11,6 @@ public class SendOfferingDelegate implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution delegate) throws Exception {
-        System.out.println("SendOfferingDelegate");
+        System.out.println("Prozessschritt: Offerte versenden!");
     }
 }

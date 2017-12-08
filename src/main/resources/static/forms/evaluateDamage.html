@@ -1,10 +1,11 @@
-<strong>Schadenfall des Kunden beurteilen</strong>
+<strong>Eine neue Offerte erstellen.</strong><p/>
+Bitte wählen Sie einen Kunden aus.
 
 <form role="form" class="form-horizontal">
   <div class="control-group">
     <label class="control-label">Kunde: </label>
     <div class="controls">
-      <select cam-variable-name="customer_id" cam-variable-type="Integer" >
+      <select cam-variable-name="customer_id" cam-variable-type="Integer" ng-change="update()"  ng-model="currentCustomer">
         <!-- We iterate over the data structure provided in the
           -- Customer class of the java backend. We can directly operate
           -- on the JSON data structures as is. No conversion required!
@@ -14,22 +15,111 @@
     </div>
   </div>
 
+  <p/>
+  <strong>Kunde</strong>
+  <p ng-bind="customer.name"><p/>
+  <p ng-bind="customer.street"><p/>
+  <p ng-bind="customer.city"><p/>
+
+
   <div class="control-group">
-    <label class="control-label">Selbstverursacht?</label>
-    <div class="controls">
-      <input type="checkbox"
-             cam-variable-name="isCustomerFault"
-             cam-variable-type="Boolean"
-             class="form-control" />
-    </div>
+    <table ng-table="productsTable" class="table table-striped">
+      <tr ng-repeat="product in productList">
+        <td data-title="'Id'" >
+          {{product.odooId}}
+        </td>
+        <td data-title="'Name'" >
+          {{product.name}}
+        </td>
+        <td data-title="'Preis'" >
+          {{product.price}}
+        </td>
+        <td data-title="'Menge'" >
+          <input type="number" ng-model="product.amount"></input>
+        </td>
+      </tr>
+    </table>
   </div>
 
   <script cam-script type="text/form-script">
-        /* We don't have a running instance jet. Thus we cannot pull the data
-         * from process variables. Instead we simply call a REST-API on the
-         * server to provide the instance-independent data.
-         */
         inject(['$scope', '$http', function($scope, $http) {
+            camForm.on('form-loaded', function() {
+                camForm.variableManager.fetchVariable('productList');
+                camForm.variableManager.fetchVariable('customer');
+            });
+
+            $scope.update = function() {
+              $scope.customer = $scope.CustomerList.find((customer) => {
+                 return customer.odooId === parseInt(this.currentCustomer);
+              }, $scope);
+              console.log($scope.customer);
+
+            }
+
+
+            camForm.on('variables-fetched', function() {
+                var productList = camForm.variableManager.variable('productList').value;
+                $scope.productList = productList;
+
+                var customer = camForm.variableManager.variable('customer').value;
+                $scope.customer = customer;
+
+
+                // Ugly, ugly JavaScript! Bah! Look, I can just add fields to objects ...
+                for (var key in productList) {
+                    console.log(productList[key]);
+                    productList[key].amount = 0;
+                }
+                console.log($scope.productList);
+            });
+
+            camForm.on('submit', function(evt) {
+                var productList = $scope.productList;
+
+
+                var orderList = [];
+
+                for (var index in productList) {
+                    console.log(productList[index]);
+                    var orderLine = {};
+
+                    /* No, we don't order negative amounts :-)
+                     * In any reasonable environment this should also
+                     * be checked in the backend.
+                     * And again - adding fields dynamically - sigh ...
+                     */
+                     if(productList[index].amount > 0) {
+                        orderLine.productId = productList[index].odooId;
+                        orderLine.quantity = productList[index].amount;
+                        orderLine.name = productList[index].name;
+                        orderLine.unitOfMeasureId = 1;
+                        orderLine.unitPrice = productList[index].price;
+                        orderList.push(orderLine);
+                    }
+
+                }
+
+                console.log(orderList);
+
+                // Now let's introduce our nice order List to the process engine
+                camForm.variableManager.createVariable({
+                    name: 'orderList',
+                    type: 'Object',
+                    value: orderList,
+                    valueInfo: {
+                        // We want JSON, not that XML rubbish ...
+                        serializationDataFormat: 'application/json',
+                        // This is actually tricky to get right!
+                        objectTypeName: 'java.util.ArrayList<ch.itsheinrich.teaching.camunda.model.OrderLine>'
+                    }
+                });
+            });
+
+
+            /* We don't have a running instance jet. Thus we cannot pull the data
+             * from process variables. Instead we simply call a REST-API on the
+             * server to provide the instance-independent data.
+             */
              camForm.on('form-loaded', function() {
                  $http({
                      method: 'GET',
@@ -43,6 +133,7 @@
                      }
                  );
              });
-         }]);
+        }]);
+
     </script>
 </form>

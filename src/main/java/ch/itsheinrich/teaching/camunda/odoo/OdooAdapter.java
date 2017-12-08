@@ -102,7 +102,9 @@ public class OdooAdapter {
                     {
                         put("fields", asList(
                                 "name",
-                                "comment"
+                                "comment",
+                                "street",
+                                "city"
                         ));
                         put("offset", 0);
                         put("limit", 5);
@@ -111,7 +113,10 @@ public class OdooAdapter {
         List<Customer> results = new LinkedList<>();
 
         res.forEach((odooResultObject) -> {
-            results.add(new Customer((HashMap) odooResultObject));
+            Customer c = new Customer((HashMap) odooResultObject);
+            c.setCity((String) ((HashMap) odooResultObject).get("city"));
+            c.setStreet((String) ((HashMap) odooResultObject).get("street"));
+            results.add(c);
         });
         return results;
     }

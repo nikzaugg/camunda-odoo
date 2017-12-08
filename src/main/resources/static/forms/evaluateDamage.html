@@ -21,6 +21,21 @@ Bitte wählen Sie einen Kunden aus.
   <p ng-bind="customer.street"><p/>
   <p ng-bind="customer.city"><p/>
 
+  <hr>
+
+  <div class="control-group">
+    <label class="control-label">Ist der Schaden vom Kunden verursacht?</label>
+    <div class="controls">
+      <input type="checkbox"
+             cam-variable-name="isCustomerFault"
+             cam-variable-type="Boolean"
+             class="form-control" />
+    </div>
+  </div>
+
+  <hr>
+
+  <p>Bitte zu ersetzende Teile angeben:</p>
 
   <div class="control-group">
     <table ng-table="productsTable" class="table table-striped">

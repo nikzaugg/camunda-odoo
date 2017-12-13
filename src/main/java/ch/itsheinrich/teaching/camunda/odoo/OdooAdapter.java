@@ -398,7 +398,7 @@ public class OdooAdapter {
                 asList(orderId)
         ));
 
-        return invoice_id.value;
+        return invoice_id;
     }
 
     /**

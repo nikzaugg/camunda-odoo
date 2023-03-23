@@ -18,10 +18,9 @@
 package ch.itsheinrich.teaching.camunda.REST;
 
 import ch.itsheinrich.teaching.camunda.model.Customer;
+import ch.itsheinrich.teaching.camunda.model.Product;
 import ch.itsheinrich.teaching.camunda.odoo.AdapterFactory;
-import ch.itsheinrich.teaching.camunda.odoo.OdooAdapter;
-import ch.itsheinrich.teaching.camunda.odoo.OdooConnection;
-import java.io.InputStream;
+
 import java.util.ArrayList;
 import java.util.List;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -42,7 +41,30 @@ public class CustomersController {
             return AdapterFactory.getOdooAdapter().readFiveCustomers();
         }
         catch(Exception e) {
+            System.out.println(e);
             return new ArrayList<>();
         }
     }
+     @RequestMapping(method = RequestMethod.GET, value = "/products", produces = APPLICATION_JSON_VALUE)
+        public List<Product> readFiveProducts() {
+            try {
+                return AdapterFactory.getOdooAdapter().readFiveProducts();
+            }
+            catch(Exception e) {
+                System.out.println(e);
+                return new ArrayList<>();
+            }
+        }
+
+    // Cette fonction marche bien
+    @RequestMapping(method = RequestMethod.GET, value = "/newProductOdoo", produces = APPLICATION_JSON_VALUE)
+    public Object newProductOdoo() {
+            try {
+                return AdapterFactory.getOdooAdapter().createProduct(null);
+            }
+            catch(Exception e) {
+                System.out.println(e);
+                return 0;
+            }
+        }
 }

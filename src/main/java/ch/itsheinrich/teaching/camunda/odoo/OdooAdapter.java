@@ -21,7 +21,7 @@ import ch.itsheinrich.teaching.camunda.model.Customer;
 import ch.itsheinrich.teaching.camunda.model.OrderLine;
 import ch.itsheinrich.teaching.camunda.model.Product;
 import ch.itsheinrich.teaching.camunda.model.SaleOrder;
-import ch.qos.logback.core.CoreConstants;
+
 import java.util.ArrayList;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -151,7 +151,7 @@ public class OdooAdapter {
         return c;
     }
 
-    public List<Product> readFiveProducts() throws XmlRpcException {
+   public List<Product> readFiveProducts() throws XmlRpcException {
 
         List odooResultList = asList((Object[]) objectClient.execute(
                 "execute_kw", asList(
@@ -172,7 +172,7 @@ public class OdooAdapter {
                                 "product_tmpl_id"
                         ));
                         put("offset", 0);
-                        put("limit", 5);
+                        put("limit", 10000);
                     }
                 })));
         List<Product> results = new LinkedList<>();
@@ -410,4 +410,38 @@ public class OdooAdapter {
         ));
 
     }
+
+    /**
+     * ************** EXPERIMENTAL ***********************
+     */
+    public Object createProduct(Product product) throws XmlRpcException {
+
+
+        List article = asList("product.product",new HashMap() {
+            {
+                    put("default_code", "1122334458");
+                    put("name", "Kap test api");
+                    put("categ_id", new HashMap() {
+                        {put("name", asList(
+                                "categ_test_api"
+                        ));}
+                        //put("name", "categ_test_api")
+                    });
+                    put("type", "product");
+                    put("list_price", 250);
+                    put("sap_quantity", 10);
+
+                }
+        });
+        Object id =  objectClient.execute("execute_kw", asList(
+                        config.getDb(),
+                        config.getUserId(),
+                        config.getPassword(),
+                        "web.service.conf", "create_api",
+                        article
+                ));
+                System.out.println("ch.itsheinrich.teaching.camunda.odoo.OdooAdapter.createProduct() EXECUTED! RESULT=" + id);
+                return id;
+    }
+
 }

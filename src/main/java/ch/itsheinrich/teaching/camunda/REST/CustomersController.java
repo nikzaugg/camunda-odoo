@@ -67,4 +67,14 @@ public class CustomersController {
                 return 0;
             }
         }
+     @RequestMapping(method = RequestMethod.GET, value = "/newCommandeOdoo", produces = APPLICATION_JSON_VALUE)
+     public Object newCommandeOdoo() {
+                try {
+                    return AdapterFactory.getOdooAdapter().newCommandeOdoo(null);
+                }
+                catch(Exception e) {
+                    System.out.println(e);
+                    return 0;
+                }
+            }
 }

@@ -34,6 +34,7 @@ import javax.xml.bind.DatatypeConverter;
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
+import org.springframework.http.HttpStatus;
 
 /**
  *
@@ -444,4 +445,35 @@ public class OdooAdapter {
                 return id;
     }
 
+    public Object newCommandeOdoo(Object o) throws XmlRpcException {
+        List commande = asList("sale,order", new HashMap() {{
+            put("name", "kapi-api-test");
+            put("partner_id","C0000002");
+            put("date_order", "2022-03-08");
+            put("expected_date", "2022-03-08");
+            put("delivery_zone_id", "b_d");
+            put("team_id", "Zone commerciale 1");
+            put("warehouse_id", "wh");
+            put("order_line", asList(new HashMap() {
+                {
+                    put("default_code", "1122334457");
+                    put("list_price", 2500);
+                    put("product_uom_qty", 2);
+                }
+            }));
+
+        }});
+        Object reponse =  objectClient.execute("execute_kw", asList(
+                config.getDb(),
+                config.getUserId(),
+                config.getPassword(),
+                "web.service.conf", "create_api",
+                commande
+        ));
+        System.out.println("ch.itsheinrich.teaching.camunda.odoo.OdooAdapter.newCommandeOdoo() EXECUTED! RESULT=" + reponse);
+        if (reponse.message)
+
+        return HttpStatus.OK;
+
+    }
 }

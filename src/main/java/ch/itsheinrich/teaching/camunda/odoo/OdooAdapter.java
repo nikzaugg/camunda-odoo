@@ -17,10 +17,7 @@
  */
 package ch.itsheinrich.teaching.camunda.odoo;
 
-import ch.itsheinrich.teaching.camunda.model.Customer;
-import ch.itsheinrich.teaching.camunda.model.OrderLine;
-import ch.itsheinrich.teaching.camunda.model.Product;
-import ch.itsheinrich.teaching.camunda.model.SaleOrder;
+import ch.itsheinrich.teaching.camunda.model.*;
 
 import java.util.ArrayList;
 import static java.util.Arrays.asList;
@@ -446,34 +443,45 @@ public class OdooAdapter {
     }
 
     public Object newCommandeOdoo(Object o) throws XmlRpcException {
-        List commande = asList("sale,order", new HashMap() {{
-            put("name", "kapi-api-test");
-            put("partner_id","C0000002");
-            put("date_order", "2022-03-08");
-            put("expected_date", "2022-03-08");
-            put("delivery_zone_id", "b_d");
-            put("team_id", "Zone commerciale 1");
-            put("warehouse_id", "wh");
-            put("order_line", asList(new HashMap() {
-                {
-                    put("default_code", "1122334457");
-                    put("list_price", 2500);
-                    put("product_uom_qty", 2);
-                }
-            }));
-
+        System.out.println("Step 1");
+        List commande = asList("sale.order", new HashMap() {{
+            put("name", "kapi-api-test3");
+            put("partner_id",new HashMap() {{put("name", "C0000004");}});
+            put("date_order", "2022-03-29");
+            put("expected_date", "2022-03-29");
+            put("delivery_zone_id", new HashMap() {{put("code", "b_d");}});
+            put("team_id", new HashMap() {{put("name", "Zone commerciale 1");}});
+            put("warehouse_id",  new HashMap() {{put("code", "wh");}});
+            put("order_line", asList(
+                        new HashMap() {
+                            {
+                                put("default_code", "1122334456");
+                                put("list_price", 300);
+                                put("product_uom_qty", 1);
+                            }
+                        }
+                    )
+            );
         }});
-        Object reponse =  objectClient.execute("execute_kw", asList(
+        System.out.println("Step 2");
+        System.out.println("Commande: " + commande);
+        HashMap<String,String> map = (HashMap<String, String>) objectClient.execute("execute_kw", asList(
                 config.getDb(),
                 config.getUserId(),
                 config.getPassword(),
                 "web.service.conf", "create_api",
                 commande
         ));
-        System.out.println("ch.itsheinrich.teaching.camunda.odoo.OdooAdapter.newCommandeOdoo() EXECUTED! RESULT=" + reponse);
-        if (reponse.message)
+        System.out.println("Step 3");
 
-        return HttpStatus.OK;
+        System.out.println("odoo.OdooAdapter.newCommandeOdoo() EXECUTED! RESULT=" + map);
+        System.out.println("message: "+map);
+        if (map.get("message").equals("success")){
+            return HttpStatus.OK;
+        }
+        else {
+            return HttpStatus.BAD_REQUEST;
+        }
 
     }
 }

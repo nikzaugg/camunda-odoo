@@ -24,6 +24,8 @@ import ch.itsheinrich.teaching.camunda.odoo.AdapterFactory;
 import java.util.ArrayList;
 import java.util.List;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -68,9 +70,11 @@ public class CustomersController {
             }
         }
      @RequestMapping(method = RequestMethod.GET, value = "/newCommandeOdoo", produces = APPLICATION_JSON_VALUE)
+     // @Transactional(timeout = 3)
      public Object newCommandeOdoo() {
                 try {
                     return AdapterFactory.getOdooAdapter().newCommandeOdoo(null);
+                    // return null;
                 }
                 catch(Exception e) {
                     System.out.println(e);
